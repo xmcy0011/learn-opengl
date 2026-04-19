@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "lldb",
+            "request": "launch",
+            // 运行前编译
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/build/hello-rectangle/Debug/hello-rectangle.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+        }
+    ],
+    "version": "2.0.0"
+}
