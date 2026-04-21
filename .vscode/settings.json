@@ -35,5 +35,9 @@
         "map": "cpp",
         "fstream": "cpp",
         "filesystem": "cpp"
-    }
+    },
+    // 
+    // [[ shader-validator ]]
+    //
+    "shader-validator.glsl.targetClient": "OpenGL450"
 }

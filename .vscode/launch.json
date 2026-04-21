@@ -6,9 +6,9 @@
             "request": "launch",
             // 运行前编译
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/build/04_shaders/Debug/shaders.exe",
+            "program": "${workspaceFolder}/build/06_transformations/Debug/transformations.exe",
             "args": [],
-            "cwd": "${workspaceFolder}/build/04_shaders/Debug/",
+            "cwd": "${workspaceFolder}/build/06_transformations/Debug/",
             "console": "integratedTerminal",
         }
     ],
