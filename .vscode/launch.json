@@ -8,7 +8,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/build/04_shaders/Debug/shaders.exe",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/04_shaders/Debug/",
             "console": "integratedTerminal",
         }
     ],
