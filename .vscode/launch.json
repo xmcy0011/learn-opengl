@@ -6,7 +6,7 @@
             "request": "launch",
             // 运行前编译
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/build/hello-rectangle/Debug/hello-rectangle.exe",
+            "program": "${workspaceFolder}/build/04_shaders/Debug/shaders.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",

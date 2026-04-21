@@ -13,14 +13,6 @@ void processInput(GLFWwindow *window) {
   }
 }
 
-// 使用归一化坐标，初始化三角形
-// z 深度为0
-float vertices[] = {
-  -0.5f, -0.5f, 0.0f, 
-  0.5f, -0.5f, 0.0f, 
-  0.0f, 0.5f, 0.0f
-};
-
 int main() {
   // 初始化 glfw
   glfwInit();
@@ -50,6 +42,15 @@ int main() {
   // 窗口大小变化事件
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+  // 使用归一化坐标，初始化三角形
+  // z 深度为0
+  float vertices[] = {
+      // positions                     // colors
+      0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
+      -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left
+      0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f  // top
+  };
+
   // case1: 创建一个顶点缓冲对象（GPU 内存中，即显存），VBO
   unsigned int vbo;
   glGenBuffers(1, &vbo);              // 生成一个顶点缓冲对象
@@ -64,12 +65,15 @@ int main() {
   // case2: 创建顶点着色器
   const char *vetexShaderSource =
       "#version 430 core\n"
-      "layout (location = 0) in vec3 aPos;\n" // 顶点位置，输入变量
+      "layout (location = 0) in vec3 aPos;\n"   // 顶点位置，输入变量
+      "layout (location = 1) in vec3 aColor;\n" // 顶点颜色
+      "out vec3 ourColor;\n"                    // 输出颜色
       "void main()\n"
       "{\n"
       // 将顶点位置设置为归一化坐标
       // gl_Position 全局输出变量
-      "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+      "gl_Position = vec4(aPos, 1.0);\n"
+      "ourColor = aColor;\n"
       "}\n";
   unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertexShader, 1, &vetexShaderSource,
@@ -89,12 +93,12 @@ int main() {
   // case3: 创建片段着色器
   unsigned int fragmentShader =
       glCreateShader(GL_FRAGMENT_SHADER); // 创建片段着色器对象
-  const char *fragmentShaderSource =
-      "#version 430 core\n"
-      "out vec4 FragColor;\n"
-      "void main() {\n"
-      "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n" // 橙色
-      "}";
+  const char *fragmentShaderSource = "#version 430 core\n"
+                                     "out vec4 FragColor;\n"
+                                     "in vec3 ourColor;\n" // 输入变量，颜色
+                                     "void main() {\n"
+                                     "FragColor = vec4(ourColor, 1.0);\n"
+                                     "}";
   glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
   glCompileShader(fragmentShader); // 编译着色器代码
   glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
@@ -123,23 +127,21 @@ int main() {
   glDeleteShader(vertexShader); // 删除顶点着色器，程序对象创建成功后，不需要了
   glDeleteShader(fragmentShader); // 删除片段着色器，同上
 
-  // case5: 链接顶点属性
-  // 顶点属性索引为0（使用 layout = 0
-  // 指定的），每个顶点有3个浮点数，步长为3个浮点数，偏移量为0
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0); // 启用顶点属性
-
-  // case6: 生成 VAO
+  // case5: 生成 VAO
   unsigned int vao;
   glGenVertexArrays(1, &vao); // 生成一个顶点数组对象
   // 1. bind Vertex Array Object
   glBindVertexArray(vao);
-  // 2. copy our vertices array in a buffer for OpenGL to use
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-  // 3. then set our vertex attributes pointers
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
+  // 顶点着色器中，使用 layout = 0指定的 aPos
+  // position attribute
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(0); // 启用顶点属性
+  // 顶点着色器中，使用 layout = 1指定的 aColor
+  // color attribute
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                        (void *)(3 * sizeof(float)));
+  glEnableVertexAttribArray(1); // 启用属性
+  glUseProgram(shaderProgram);
 
   // 渲染循环
   while (!glfwWindowShouldClose(window)) {
@@ -154,8 +156,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);         // 清除颜色缓冲区
 
     // case7: 渲染
-    glUseProgram(shaderProgram);
-    glBindVertexArray(vao);           
+    glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // 交换本次渲染迭代期间用于渲染的颜色缓冲区（一个大型 2D 缓冲区，其中包含
