@@ -6,9 +6,9 @@
             "request": "launch",
             // 运行前编译
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/build/06_transformations/Debug/transformations.exe",
+            "program": "${workspaceFolder}/build/07_coordinate-systems/Debug/coordinate-systems.exe",
             "args": [],
-            "cwd": "${workspaceFolder}/build/06_transformations/Debug/",
+            "cwd": "${workspaceFolder}/build/07_coordinate-systems/Debug/",
             "console": "integratedTerminal",
         }
     ],
