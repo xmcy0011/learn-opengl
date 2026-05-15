@@ -18,8 +18,8 @@ void processInput(GLFWwindow *window) {
 float vertices[] = {
   0.5f,  0.5f, 0.0f,  // top right（顺时针）
   0.5f, -0.5f, 0.0f,  // bottom right
- -0.5f, -0.5f, 0.0f,  // bottom left
- -0.5f,  0.5f, 0.0f   // top left 
+ -0.5f, -0.5f, 0.0f,  // top left
+ -0.5f,  0.5f, 0.0f   // bottom left
 };
 unsigned int indices[] = {
     // note that we start from 0!
